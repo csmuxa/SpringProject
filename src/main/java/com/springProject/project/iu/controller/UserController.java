@@ -18,16 +18,19 @@ public class UserController {
     Service userService;
 
 
-    @GetMapping()
-    public String getUser() {
-        return "get";
+    @GetMapping(path = "/{id}")
+    public UserRest getUser(@PathVariable String id) {
+        UserRest returnValue = new UserRest();
+        UserDto dto = userService.getUserByUserId(id);
+        BeanUtils.copyProperties(dto, returnValue);
+        return returnValue;
     }
 
     @PostMapping
     public UserRest createUser(@RequestBody UserDetailsRequestModel userDetails) {
         UserRest returnValue = new UserRest();
-        String name=userDetails.getFirstName();
-        String last=userDetails.getLastName();
+        String name = userDetails.getFirstName();
+        String last = userDetails.getLastName();
 
         UserDto userDto = new UserDto();
         BeanUtils.copyProperties(userDetails, userDto);

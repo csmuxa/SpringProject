@@ -1,10 +1,13 @@
 package com.springProject.project.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.springProject.project.SpringApplicationContext;
 import com.springProject.project.iu.model.request.UserLoginRequestModel;
+import com.springProject.project.service.Service;
 import com.springProject.project.shared.dto.UserDto;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import org.apache.catalina.core.ApplicationContext;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -59,10 +62,14 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
         String token = Jwts.builder()
                 .setSubject(userName)
                 .setExpiration(new Date(System.currentTimeMillis() + SecurityConstants.EXPIRATION_TIME))
-                .signWith(SignatureAlgorithm.HS512, SecurityConstants.TOKEN_SECRET )
+                .signWith(SignatureAlgorithm.HS512, SecurityConstants.getToken() )
                 .compact();
 
-        res.addHeader(SecurityConstants.HEADER_STRING, SecurityConstants.TOKEN_PREFIX + token);
 
+
+        Service service= (Service)SpringApplicationContext.getBean("serviceImpl");
+        UserDto userDto=service.getUser(userName);
+        res.addHeader(SecurityConstants.HEADER_STRING, SecurityConstants.TOKEN_PREFIX + token);
+        res.addHeader("UserID",userDto.getUserId());
     }
 }
