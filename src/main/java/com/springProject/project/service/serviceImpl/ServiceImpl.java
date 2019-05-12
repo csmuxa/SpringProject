@@ -1,7 +1,9 @@
 package com.springProject.project.service.serviceImpl;
 
+import com.springProject.project.exceptions.UserServiceException;
 import com.springProject.project.io.repositories.UserRepository;
 import com.springProject.project.io.entity.UserEntity;
+import com.springProject.project.iu.model.response.ErrorMessages;
 import com.springProject.project.service.Service;
 import com.springProject.project.shared.Utils;
 import com.springProject.project.shared.dto.UserDto;
@@ -56,6 +58,26 @@ public class ServiceImpl implements Service {
         if (userEntity==null) throw new UsernameNotFoundException(id);
         BeanUtils.copyProperties(userEntity,returnValue);
         return returnValue;
+    }
+
+    @Override
+    public UserDto updateUser(String id, UserDto userDto) {
+        UserDto returnValue=new UserDto();
+        UserEntity userEntity=userRepository.findByUserId(id);
+        if (userEntity==null) throw new UserServiceException(ErrorMessages.NO_RECORD_FOUND.getErrorMessage());
+        userEntity.setFirstName(userDto.getFirstName());
+        userEntity.setLastName(userDto.getLastName());
+        UserEntity updatedUser=userRepository.save(userEntity);
+        BeanUtils.copyProperties(updatedUser,returnValue);
+
+        return returnValue;
+    }
+
+    @Override
+    public void deleteUser(String id) {
+        UserEntity userEntity=userRepository.findByUserId(id);
+        if (userEntity==null) throw new UserServiceException(ErrorMessages.NO_RECORD_FOUND.getErrorMessage());
+        userRepository.delete(userEntity);
     }
 
     @Override
