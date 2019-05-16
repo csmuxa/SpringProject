@@ -12,6 +12,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @RestController
 @RequestMapping("users")
 public class UserController {
@@ -34,8 +37,8 @@ public class UserController {
 
     @PostMapping(produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE},
             consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
-    public UserRest createUser(@RequestBody UserDetailsRequestModel userDetails) throws Exception {
 
+    public UserRest createUser(@RequestBody UserDetailsRequestModel userDetails) throws Exception {
         UserRest returnValue = new UserRest();
         UserDto userDto = new UserDto();
         BeanUtils.copyProperties(userDetails, userDto);
@@ -58,7 +61,7 @@ public class UserController {
         return returnValue;
     }
 
-    @DeleteMapping(path = "/id",produces ={MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE} )
+    @DeleteMapping(path = "/{id}",produces ={MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE} )
     public OperationStatusModel deleteUser(@PathVariable String id) {
         OperationStatusModel returnValue = new OperationStatusModel();
 
@@ -71,4 +74,16 @@ public class UserController {
         return returnValue;
     }
 
+    @GetMapping
+    public List<UserRest> getAllUsers(@RequestParam(value = "page",defaultValue = "0")int page, @RequestParam(value = "limit",defaultValue = "25")int limit){
+
+        List<UserRest> returnValue=new ArrayList<>();
+        List<UserDto> users=userService.getUsers(page,limit);
+        for (UserDto user:users){
+            UserRest rest=new UserRest();
+            BeanUtils.copyProperties(user,rest);
+            returnValue.add(rest);
+        }
+        return returnValue;
+    }
 }
