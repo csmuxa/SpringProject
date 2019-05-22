@@ -7,6 +7,7 @@ import com.springProject.project.service.Service;
 import com.springProject.project.shared.dto.UserDto;
 import com.springProject.project.iu.model.request.UserDetailsRequestModel;
 import com.springProject.project.iu.model.response.UserRest;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -40,11 +41,12 @@ public class UserController {
 
     public UserRest createUser(@RequestBody UserDetailsRequestModel userDetails) throws Exception {
         UserRest returnValue = new UserRest();
-        UserDto userDto = new UserDto();
-        BeanUtils.copyProperties(userDetails, userDto);
+       // UserDto userDto = new UserDto();
+        //BeanUtils.copyProperties(userDetails, userDto);
+        ModelMapper mapper=new ModelMapper();
+        UserDto userDto=mapper.map(userDetails,UserDto.class);
         UserDto createdUser = userService.createUser(userDto);
-        BeanUtils.copyProperties(createdUser, returnValue);
-
+        returnValue=mapper.map(createdUser,UserRest.class);
         return returnValue;
     }
 
