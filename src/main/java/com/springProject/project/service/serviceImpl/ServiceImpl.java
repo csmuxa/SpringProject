@@ -4,14 +4,13 @@ import com.springProject.project.exceptions.UserServiceException;
 import com.springProject.project.UserRepository;
 import com.springProject.project.io.entity.UserEntity;
 import com.springProject.project.iu.model.response.ErrorMessages;
-import com.springProject.project.service.Service;
+import com.springProject.project.service.UserService;
 import com.springProject.project.shared.Utils;
 import com.springProject.project.shared.dto.AddressDto;
 import com.springProject.project.shared.dto.UserDto;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.data.web.SpringDataWebProperties;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -25,7 +24,7 @@ import java.util.List;
 
 
 @org.springframework.stereotype.Service
-public class ServiceImpl implements Service {
+public class ServiceImpl implements UserService {
 
     @Autowired
     UserRepository userRepository;
