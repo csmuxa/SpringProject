@@ -49,7 +49,10 @@ public class ServiceImpl implements UserService {
         ModelMapper mapper=new ModelMapper();
         UserEntity userEntity=mapper.map(userDto,UserEntity.class);
         userEntity.setEncryptedPassword(bCryptPasswordEncoder.encode(userDto.getPassword()));
-        userEntity.setUserId(utils.generateUserId(30));
+
+        String userId=utils.generateUserId(30);
+        userEntity.setUserId(userId);
+        userEntity.setEmailVerificationToken(utils.generateEmailVerificationToken(userId));
 
         UserEntity returnEntity = userRepository.save(userEntity);
         UserDto returnDto=mapper.map(returnEntity,UserDto.class);
@@ -106,6 +109,23 @@ public class ServiceImpl implements UserService {
             BeanUtils.copyProperties(entity,dto);
             returnValue.add(dto);
         }
+        return returnValue;
+    }
+
+    @Override
+    public boolean verifyEmailToken(String token) {
+        boolean returnValue=false;
+        UserEntity userEntity=userRepository.findUserByEmailVerificationToken(token);
+        if (userEntity != null){
+            boolean hasTokenExpired=utils.hasTokenExpired(token);
+            if (!hasTokenExpired){
+                userEntity.setEmailVerificationToken(null);
+                userEntity.setEmailVerificationStatus(Boolean.TRUE);
+                userRepository.save(userEntity);
+                returnValue=true;
+            }
+        }
+
         return returnValue;
     }
 

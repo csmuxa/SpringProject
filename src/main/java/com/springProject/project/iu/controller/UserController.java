@@ -121,7 +121,7 @@ public class UserController {
 
 
     @GetMapping(path = "/{userId}/addresses/{addressId}", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE,"application/hal+json"})
-    public Resource<AddressesRest> getUserAddress(@PathVariable String userId, @PathVariable String addressId) {
+    public Resource<AddressesRest> getUserAddress(  @PathVariable String userId,@PathVariable String addressId   ) {
         AddressDto addressDto = addressesService.getAddress(addressId);
         ModelMapper mapper = new ModelMapper();
         Link addressLink = linkTo(methodOn(UserController.class).getUserAddress(userId,addressId)).withSelfRel();
@@ -134,6 +134,20 @@ public class UserController {
         return new Resource<>(returnValue);
 
     }
+
+    @GetMapping(path = "/email-verification", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE,"application/hal+json"})
+    public OperationStatusModel verifyEmailToken(@RequestParam(value = "token")String token){
+        OperationStatusModel model=new OperationStatusModel();
+        model.setOperationName(RequestOperationName.EMAIL_VERIFY.name());
+        boolean isVerified=userService.verifyEmailToken(token);
+        if(isVerified)
+            model.setOperationResult(RequestOperationStatus.SUCCESS.name());
+        else
+            model.setOperationResult(RequestOperationStatus.ERROR.name());
+        return model;
+
+    }
+
 
 
 }

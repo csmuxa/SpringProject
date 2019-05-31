@@ -1,5 +1,5 @@
 package com.springProject.project.iu.controller;
 
 public enum RequestOperationName {
-    DELETE
+    DELETE,EMAIL_VERIFY
 }
