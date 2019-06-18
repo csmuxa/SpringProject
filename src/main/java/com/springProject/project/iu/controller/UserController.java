@@ -1,6 +1,8 @@
 package com.springProject.project.iu.controller;
 
 
+import com.springProject.project.iu.model.request.PasswordResetModel;
+import com.springProject.project.iu.model.request.PasswordResetRequestModel;
 import com.springProject.project.iu.model.request.RequestOperationStatus;
 import com.springProject.project.iu.model.response.AddressesRest;
 import com.springProject.project.iu.model.response.OperationStatusModel;
@@ -147,6 +149,43 @@ public class UserController {
         return model;
 
     }
+
+    @PostMapping(path = "/password-reset-request",produces = {MediaType.APPLICATION_XML_VALUE,MediaType.APPLICATION_JSON_VALUE},consumes ={
+            MediaType.APPLICATION_XML_VALUE,MediaType.APPLICATION_JSON_VALUE})
+    public OperationStatusModel requestReset(@RequestBody PasswordResetRequestModel passwordResetRequestModel){
+        OperationStatusModel returnValue=new OperationStatusModel();
+        boolean operationResult=userService.requestPasswordReset(passwordResetRequestModel.getEmail());
+        returnValue.setOperationName(RequestOperationName.REQUEST_PASSWORD_RESET.name());
+        returnValue.setOperationResult(RequestOperationStatus.ERROR.name());
+        if (operationResult){
+            returnValue.setOperationResult(RequestOperationStatus.SUCCESS.name());
+        }
+        return returnValue;
+
+    }
+
+    @PostMapping(path = "/password-reset",consumes ={
+            MediaType.APPLICATION_XML_VALUE,MediaType.APPLICATION_JSON_VALUE})
+    public OperationStatusModel resetPassword(@RequestBody PasswordResetModel passwordResetModel){
+
+        OperationStatusModel returnValue=new OperationStatusModel();
+        boolean operationResult=userService.resetPassword(passwordResetModel.getToken(),passwordResetModel.getPassword());
+
+        returnValue.setOperationName(RequestOperationName.PASSWORD_RESET.name());
+        returnValue.setOperationResult(RequestOperationStatus.ERROR.name());
+        if (operationResult){
+
+            returnValue.setOperationResult(RequestOperationStatus.SUCCESS.name());
+        }
+
+        return returnValue;
+
+    }
+
+
+
+
+
 
 
 
