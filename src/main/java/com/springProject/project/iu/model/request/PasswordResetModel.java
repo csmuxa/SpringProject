@@ -3,7 +3,6 @@ package com.springProject.project.iu.model.request;
 public class PasswordResetModel {
     private String token;
     private String password;
-
     public String getToken() {
         return token;
     }
