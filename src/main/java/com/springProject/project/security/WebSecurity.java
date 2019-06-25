@@ -15,33 +15,39 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
     public WebSecurity(UserService userDetailsService, BCryptPasswordEncoder bCryptPasswordEncoder) {
-        this.bCryptPasswordEncoder=bCryptPasswordEncoder;
-        this.userDetailsService=userDetailsService;
+        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
+        this.userDetailsService = userDetailsService;
     }
 
     @Override
-    protected void configure(HttpSecurity http)throws Exception{
-http.csrf().disable().
-        authorizeRequests().
-        antMatchers(HttpMethod.POST,SecurityConstants.SIGN_UP_URL)
-        .permitAll()
-        .antMatchers(HttpMethod.POST,SecurityConstants.PASSWORD_RESET_URL)
-        .permitAll()
-        .antMatchers(HttpMethod.GET,SecurityConstants.EMAIL_VERIFICATION_URL)
-        .permitAll()
-        .antMatchers(HttpMethod.GET,SecurityConstants.PASSWORD_RESET_REQUEST_URL)
-        .permitAll().
-        anyRequest().authenticated().and().
-        addFilter(getAuthenticationFilter()).addFilter(new AuthorizationFilter(authenticationManager())).sessionManagement().
-        sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+    protected void configure(HttpSecurity http) throws Exception {
+        http.csrf().disable().
+                authorizeRequests().
+                antMatchers(HttpMethod.POST, SecurityConstants.SIGN_UP_URL)
+                .permitAll()
+                .antMatchers(HttpMethod.POST, SecurityConstants.PASSWORD_RESET_URL)
+                .permitAll()
+                .antMatchers(HttpMethod.GET, SecurityConstants.EMAIL_VERIFICATION_URL)
+                .permitAll()
+                .antMatchers(HttpMethod.GET, SecurityConstants.PASSWORD_RESET_REQUEST_URL)
+                .permitAll()
+                .antMatchers(SecurityConstants.H2_CONSOLE)
+                .permitAll().
+                anyRequest().authenticated().and().
+                addFilter(getAuthenticationFilter()).addFilter(new AuthorizationFilter(authenticationManager())).sessionManagement().
+                sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+
+        http.headers().frameOptions().disable();
+
     }
+
     @Override
-    protected void configure(AuthenticationManagerBuilder auth)throws Exception{
+    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth.userDetailsService(userDetailsService).passwordEncoder(bCryptPasswordEncoder);
     }
 
-    public AuthenticationFilter getAuthenticationFilter() throws Exception{
-        final AuthenticationFilter authenticationFilter=new AuthenticationFilter(authenticationManager());
+    public AuthenticationFilter getAuthenticationFilter() throws Exception {
+        final AuthenticationFilter authenticationFilter = new AuthenticationFilter(authenticationManager());
         authenticationFilter.setFilterProcessesUrl("/users/login");
         return authenticationFilter;
     }

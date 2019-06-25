@@ -11,6 +11,7 @@ public class SecurityConstants {
     public static final String PASSWORD_RESET_URL="/SpringApp/users/password-reset";
     public static long PASSWORD_RESET_EXPIRATION_TIME=1000*60*60;
     public static String PASSWORD_RESET_REQUEST_URL="/SpringApp/users/password-reset-request";
+    public static String H2_CONSOLE="/h2-console/**";
 
 
     public static String getToken(){
